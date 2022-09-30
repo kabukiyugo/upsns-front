@@ -1,32 +1,19 @@
 <template>
   <v-btn
+    class="edit"
     :height="height"
     :width="width"
     :color="buttonColor"
-    :isFavorite="isFavorite"
     icon
     @click="onClick"
   >
-    <div v-if="isFavorite">
-      <font-awesome-icon
-        icon="fa-solid fa-star"
-        style="color: #ffff00"
-        size="2x"
-      />
-    </div>
-    <div v-else>
-      <font-awesome-icon
-        icon="fa-regular fa-star"
-        style="color: #a9a9a9"
-        size="2x"
-      />
-    </div>
+    <v-icon>mdi-backspace-outline</v-icon>
   </v-btn>
 </template>
   
   <script>
 export default {
-  name: "plus-button",
+  name: "close-button",
   methods: {
     onClick() {
       this.$emit("button-click");
@@ -47,18 +34,17 @@ export default {
     color: {
       type: String,
     },
-    isFavorite: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     buttonColor() {
-      return this.color ? this.color : "black";
+      return this.color ? this.color : "white";
     },
   },
 };
 </script>
   
-  <style>
+<style>
+.edit {
+    box-shadow: none;
+}
 </style>

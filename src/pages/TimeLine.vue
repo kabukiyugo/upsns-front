@@ -1,125 +1,96 @@
 <template>
   <v-container fluid fill-height>
-    <v-row no-gutters class="py-8">
-      <v-col cols="3" class="py-8">
-        <search-form />
+    <v-row no-gutters class="py-sm-8">
+      <v-col sm="3" class="pt-sm-11">
+        <search-form class="following" />
       </v-col>
 
-      <v-col cols="9" class="py-8 px-11">
+      <v-col sm="9" class="py-8 px-10">
         <ul>
           <li
             class="timeLine_main"
-            v-for="article in displayList"
-            :key="article.id"
+            v-for="content in displayList"
+            :key="content.article.id"
           >
             <v-sheet color="white">
               <v-row no-gutters>
-                <v-col cols="1">
-                  <v-avatar
-                    icon="mdi-account-multiple-outline"
-                    color="#ffa500"
-                    size="60"
-                  >
+                <v-col cols="3" md="1">
+
+                  <v-avatar size="60" color="indigo">
+                    <v-icon size="60" dark> mdi-account-circle </v-icon>
                   </v-avatar>
+
                 </v-col>
-                <v-col cols="11">
-                  <v-row no-gutters class="pl-3 py-2">
-                    <simple-link
+                <v-col cols="9" md="11">
+                  <v-row no-gutters class="pl-3 pt-2">
+                    <general-link
                       id="user_name_size"
-                      :params="{ id: article.user.id }"
+                      :params="{ id: content.article.user.id }"
                       :href="'/others-page'"
-                      :text="article.user.name"
-                    >
-                    </simple-link>
+                      :text="content.article.user.name"
+                    />
                   </v-row>
-                  <v-row no-gutters class="pl-3 my-4">
+                  <v-row no-gutters class="pl-3 mt-3">
                     <h1 class="text-xs-h6 text-md-h5 text-lg-h4">
-                      <simple-link
-                        :params="{ id: article.id }"
+                      <general-link
+                        :params="{ id: content.article.id }"
                         :href="'/main-article'"
-                        :text="article.title"
-                      >
-                      </simple-link>
+                        :text="content.article.title"
+                      />
                     </h1>
                   </v-row>
 
-                  <!-- 記事の最初の1行だけ表示 -->
-                  <!-- マークダウンから変更するコードの追加が必要 -->
-                  <v-row no-gutters class="pl-3">
-                    <p class="first-text">{{ article.body }}</p>
-                  </v-row>
-
-                  <!--リプライ機能-->
-                  <!-- <div class="text-center">
-                    <v-menu>
-                      <template v-slot:activator="{ props }"> -->
-                  <!--このボタンを押してリプライ内容を表示-->
-                  <!-- <general-button
-                          :menuProps="props"
-                          :buttonText="menuText"
-                          :height="height"
-                          :width="width"
-                          @button-click="onButtonClick(article.id)"
-                        >
-                        </general-button>
-                      </template> -->
-                  <!--リプライ表示欄-->
-                  <!-- <v-list>
-                        <v-list-item v-for="reply in replys" :key="reply.id"> -->
-                  <!-- <v-avatar
-              icon="mdi-account-multiple-outline"
-              color="#ffa500"
-              size="33"
-          >
-          </v-avatar> -->
-                  <!-- <simple-link
-              id="user_name_size"
-              :params="{ id: article.user.id }"
-              :href="'/others-page'"
-              :text="article.user.name"
-          /> -->
-                  <!-- <v-list-item-title>
-                            {{ reply.comment }}
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </div>
-                  <br /> -->
-
+                  <!--タグの表示-->
                   <v-row no-gutters class="pr-10" justify="end">
-                    <!--タグの表示-->
-                    <v-card-actions>
+                    <v-chip-group>
                       <v-chip
-                        draggable
-                        v-for="tag in article.tags"
+                        v-for="tag in content.article.tags"
                         :key="tag.id"
                         label
+                        class="pa-3"
                       >
-                        <simple-link
+                        <general-link
                           :params="{ searchType: 0, word: tag.name }"
                           :href="'/search'"
                           :text="'#' + tag.name"
-                        >
-                        </simple-link>
+                        />
                       </v-chip>
-                    </v-card-actions>
+                    </v-chip-group>
                   </v-row>
 
-                  <!--保存ボタン-->
+                  <!-- リプライ件数表示ボタン -->
                   <v-row no-gutters class="pl-3">
-                    <v-card-actions class="justify-end">
-                      <plus-button
-                        :color="color"
-                        :height="40"
-                        :width="40"
-                        @button-click="save(article.id)"
-                      >
-                      </plus-button>
-                    </v-card-actions>
+                    <v-col cols="4">
+                      <v-card-actions class="justify-center">
+                        <replycount-button
+                          :color="color"
+                          :height="40"
+                          :width="40"
+                          @button-click="moveReply(content.article.id)"
+                          :replyCount="content.replyCount"
+                        />
+                        {{ content.replyCount }}
+                      </v-card-actions>
+                    </v-col>
+
+                    <!--保存ボタン-->
+                    <v-col cols="4">
+                      <v-card-actions class="justify-center">
+                        <plus-button
+                          :color="color"
+                          :height="40"
+                          :width="40"
+                          @button-click="
+                            saveOrDelete(content.article.id, content.isFavorite)
+                          "
+                          :isFavorite="content.isFavorite"
+                        />
+                      </v-card-actions>
+                    </v-col>
                   </v-row>
-                  <v-row no-gutters class="pl-3" justify="end">
-                    <p>{{ article.insertTime }}</p>
+
+                  <v-row class="justify-end mr-3">
+                    <p>{{ content.article.insertTime }}</p>
                   </v-row>
                 </v-col>
               </v-row>
@@ -128,6 +99,7 @@
         </ul>
       </v-col>
     </v-row>
+
     <!--ページ送り-->
     <v-row no-gutters>
       <v-col cols="12">
@@ -137,8 +109,7 @@
             :length="Math.ceil(this.articles.length / this.pageSize)"
             :total-visible="7"
             @update:modelValue="pageChange($event)"
-          >
-          </v-pagination>
+          />
         </div>
       </v-col>
     </v-row>
@@ -148,126 +119,109 @@
 <script>
 import axios from "axios";
 import SearchForm from "../components/molecules/SearchForm.vue";
-import SimpleLink from "../components/atoms/links/GeneralLink.vue";
+import GeneralLink from "../components/atoms/links/GeneralLink.vue";
 import PlusButton from "../components/atoms/buttons/PlusButton.vue";
-// import GeneralButton from "@/components/atoms/buttons/GeneralButton.vue";
+import ReplyCountButton from "../components/atoms/buttons/ReplyCountButton.vue";
+
 export default {
   components: {
-    "simple-link": SimpleLink,
+    "general-link": GeneralLink,
     "search-form": SearchForm,
     "plus-button": PlusButton,
-    // "general-button": GeneralButton,
+    "replycount-button": ReplyCountButton,
   },
   name: "TimeLine",
   data() {
     return {
-      page: 1,
-      buttonText: "保存する",
       height: 40,
       width: 100,
       articles: [],
-      displayList: [],
-      pageSize: 5,
       replys: [],
-      menuText: "リプライ表示",
-      loading: false,
-      clicked: 0,
+      displayList: [],
+      page: 1,
+      pageSize: 10,
+      userId: Number,
+      isFavorite: Boolean,
+      replyCount: Number,
     };
   },
   methods: {
-    async save(articleId) {
-      const res = await axios.post("http://localhost:8080/favorite", {
-        articleId: articleId,
-        pushUserId: 6,
-        //IDを指定している(ログイン実装後、ログインしているユーザーのIDを差し込む)
-      });
-      console.log(articleId);
-      this.keepArticle = res.data;
-      alert("保存しました");
+    async moveReply(articleId) {
+      this.$router.push("/main-article?id=" + articleId);
+    },
+    //ログインしてる情報に基づいてログインユーザーのfavoriteテーブルに記事を保存
+    async saveOrDelete(articleId, isFavorite) {
+      this.userId = this.$store.getters.getUserId();
+      if (isFavorite) {
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_UPL}/favorite/seachByIds/` +
+            articleId +
+            "/" +
+            this.userId
+        );
+        const favArt = res.data;
+        await axios.delete(
+          `${process.env.VUE_APP_API_BASE_UPL}/favorite/` + favArt.id
+        );
+      } else {
+        await axios.post(`${process.env.VUE_APP_API_BASE_UPL}/favorite`, {
+          articleId: articleId,
+          pushUserId: this.userId,
+        });
+      }
+      await this.init();
     },
     pageChange(pageNumber) {
-      console.log(pageNumber);
       this.displayList = this.articles.slice(
         this.pageSize * (pageNumber - 1),
         this.pageSize * pageNumber
       );
+      this.$store.commit("updatePageNumber", pageNumber);
+      scrollTo(0, 0);
     },
-    // async reply(parentId,articleId){
-    //   await axios.post('http://localhost:8080/reply', {
-    //     //  replyId: replyId,
-    //      parentId: parentId,
-    //      articleId: articleId,
-    //      comment:
-    //      userId: ログイン時のユーザー
-    //   })
-    // },
-    async getReply(articleId) {
-      this.loading = true;
+    async init() {
+      this.userId = this.$store.getters.getUserId(); //1
       const res = await axios.get(
-        "http://localhost:8080/reply/search/" + articleId
+        `${process.env.VUE_APP_API_BASE_UPL}/article/timeline/${this.userId}`
       );
-      this.replys = res.data;
-      console.log(res.data);
-      this.loading = false;
-    },
-
-    async onButtonClick(articleId) {
-      if (this.clicked !== articleId) {
-        await this.getReply(articleId);
-      } else {
-        this.replys = [];
-      }
+      this.articles = res.data;
+      //this.length = Math.ceil(this.articles.length/this.pageSize);
+      this.page = this.$store.getters.getPageNumber();
+      this.displayList = this.articles.slice(
+        this.pageSize * (this.page - 1),
+        this.pageSize * this.page
+      );
     },
   },
   async mounted() {
-    const res = await axios.get("http://localhost:8080/article/timeline");
-    this.articles = res.data;
-    //this.length = Math.ceil(this.articles.length/this.pageSize);
-    this.displayList = this.articles.slice(
-      this.pageSize * (this.page - 1),
-      this.pageSize * this.page
-    );
+    await this.init();
   },
-  // computed:{
-  //   isOpen(){
-  //     return this.replys.length !== 0
-  //   }
-  // }
 };
 </script>
 
 <style>
-/* #search_lock {
-  float: left;
-  width: 30%;
-  height: 50%;
-  margin-top: 10%;
-  margin-left: -150px;
-} */
-h3 {
-  margin-bottom: 0.2px;
+/*searchFormの追従機能*/
+.following {
+  border-radius: 13px;
+  padding: 1rem;
+  margin-left: 1rem;
+  position: sticky;
+  top: 80px;
+  max-height: 90vh;
 }
-/* .main_lock {
-  float: right;
-  width: 100%;
-  margin-top: 30px;
-} */
-/* #TimeLine_H1 {
-  position: relative;
-  padding: 0.2em 0.5em;
-  background: rgb(136, 44, 193);
-  color: white;
-  font-weight: lighter;
-} */
 .timeLine_main {
   list-style-type: none;
   outline: rgb(235, 235, 235) solid 1px;
-  padding: 1em;
+  padding: 1em 1em 1em 0;
+}
+#user_icon_size {
+  width: 70%;
+  aspect-ratio: 1 / 1;
 }
 #user_name_size {
   font-size: 20px;
 }
-#simple-link {
+#general-link {
   text-align: left;
 }
 #border {
@@ -276,10 +230,5 @@ h3 {
 .text-center {
   text-align: center;
   margin-top: 20px;
-}
-.first-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 </style>

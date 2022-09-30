@@ -1,47 +1,37 @@
 <template>
-  <v-app>
-    <!-- <v-form v-model="valid"> -->
-    <!-- <v-container fluid> -->
-    <!-- <v-row>
-          <v-col cols="12" md="6"> </v-col>
-        </v-row> -->
-
-    <v-sheet color="white" height="300" width="360">
+  <v-container fluid fill-height>
+    <v-row no-gutters justify="center">
       <h3>検索</h3>
-      <v-list>
-        <v-list-item>
-          <v-radio-group v-model="selectedType" row mandatory>
-            <v-radio
-              v-for="searchType in searchTypes"
-              :label="searchType.label"
-              :value="searchType.id"
-              :key="searchType.id"
-            />
-          </v-radio-group>
-        </v-list-item>
+    </v-row>
+    <v-row no-gutters justify="center">
+      <v-radio-group v-model="selectedType" mandatory>
+        <v-radio
+          v-for="searchType in searchTypes"
+          :label="searchType.label"
+          :value="searchType.id"
+          :key="searchType.id"
+        />
+      </v-radio-group>
+    </v-row>
 
-        <v-list-item>
-          <general-input
-            :value="value"
-            :message="searchTypes[selectedType].label"
-            @input="value = $event"
-          />
-        </v-list-item>
+    <v-row no-gutters justify="center">
+      <general-input
+        :value="value"
+        :message="searchTypes[selectedType].label"
+        @input="value = $event"
+      />
+    </v-row>
 
-        <v-list-item id="searchButtonStyle">
-          <general-button
-            @button-click="search(value)"
-            :buttonText="buttonText"
-            :height="height"
-            :width="width"
-            :disabled="value == ''"
-          />
-        </v-list-item>
-      </v-list>
-    </v-sheet>
-    <!-- </v-container> -->
-    <!-- </v-form> -->
-  </v-app>
+    <v-row no-gutters justify="center">
+      <general-button
+        @button-click="search(value)"
+        :buttonText="buttonText"
+        :height="height"
+        :width="width"
+        :disabled="value == ''"
+      />
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -72,15 +62,14 @@ export default {
     ],
   }),
   methods: {
-    search(value) {
+    search() {
       this.$router.push({
         path: "/search",
         query: {
           searchType: this.selectedType,
           word: this.value,
         },
-      }),
-        alert(value);
+      });
     },
   },
 };

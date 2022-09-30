@@ -4,37 +4,39 @@
   <div id="my-article">
 
     <ul>
-      <li id="my_article" v-for="article in articleList" :key="article.id">
-        <v-card
-          elevation="8"
-          shaped
-          weight="10%"
-        >
-        <p>記事ID:{{article.id}}</p>
-        <p>見出し:{{article.title}}</p>
-        <p>投稿日:{{article.insertTime}}</p>
-        <p>更新日:{{article.updateTime}}</p>
-        <h2 class="text-xs-h4 text-md-h4 text-lg-h4">
-        <simple-link
-          :text="article.title"
-          :href="'/main-article'"
-          :params="{ id: article.id }"
-        >
-        </simple-link>
+      <li id="my_article" 
+        v-for="article in articleList" 
+        :key="article.id"
+      >
+          <v-card
+            elevation="8"
+            shaped
+            weight="10%"
+          >
+            <p>記事ID:{{article.id}}</p>
+            <p>見出し:{{article.title}}</p>
+            <p>投稿日:{{article.insertTime}}</p>
+            <p>更新日:{{article.updateTime}}</p>
+            <h2 class="text-xs-h4 text-md-h4 text-lg-h4">
+              <general-link
+                :text="article.title"
+                :href="'/main-article'"
+                :params="{ id: article.id }"
+              />
         </h2>
         <v-card-actions>
-              <v-spacer></v-spacer>
-              <plus-button
-                :color="color"
-                :height="40"
-                :width="40"
-                @button-click="save(article.id)">
-              </plus-button>
-              <v-btn>
+            <v-spacer></v-spacer>
+            <plus-button
+              :color="color"
+              :height="40"
+              :width="40"
+              @button-click="save(article.id)"
+            />
+            <v-btn>
               <v-icon>mdi-message-text</v-icon>
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
       </li>
     </ul>
   </div>
@@ -43,17 +45,17 @@
 
 <script>
 import axios from 'axios';
-import SimpleLink from '../components/atoms/links/GeneralLink.vue'
+import GeneralLink from '../components/atoms/links/GeneralLink.vue'
 // import EditButton from '../components/atoms/buttons/GeneralButton'
 // import DeleteButton from '../components/atoms/buttons/GeneralButton'
 
 export default {
+  name: "MyArticle",
   components:{
-    'simple-link': SimpleLink,
+    'general-link': GeneralLink,
     // "edit-button":EditButton,
     // 'delete-button':DeleteButton
   },
-  name: "MyArticle",
   data(){
     return {
       user: Object,
@@ -64,8 +66,12 @@ export default {
   },
   async mounted (){
     this.isLoading = true;
-    const user = axios.get('http://localhost:8080/user/'+ this.$route.query.userId);
-    const articles = axios.get('http://localhost:8080/article/user/'+ this.$route.query.userId);
+    const user = axios.get(
+      `${process.env.VUE_APP_API_BASE_UPL}/user/${this.$route.query.userId}`
+    );
+    const articles = axios.get(
+      `${process.env.VUE_APP_API_BASE_UPL}/article/user/${this.$route.query.userId}`
+    );
     let userRes;
     let articlesRes;
     [userRes, articlesRes] = await Promise.all([user, articles]);

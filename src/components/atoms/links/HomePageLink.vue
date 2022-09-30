@@ -1,10 +1,10 @@
 <template>
-  <p class="link" @click="moveTo(createUrl)">{{ text }}</p>
+  <a class="link" :href="createUrl">{{ text }}</a>
 </template>
 
 <script>
 export default {
-  name: "GeneralLink",
+  name: "HomePageLink",
   props: {
     text: String,
     href: String,
@@ -31,11 +31,6 @@ export default {
       return url;
     }
   },
-  methods:{
-    moveTo(url){
-      this.$router.push(url);
-    }
-  }
 
 };
 </script>
@@ -43,5 +38,6 @@ export default {
 <style>
 .link {
   cursor: pointer;
+  color:black
 }
 </style>

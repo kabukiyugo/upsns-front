@@ -5,16 +5,9 @@
     :color="buttonColor"
     @click="onClick"
     v-bind="vuetifyProps"
-    icon>
-           
-  <v-badge
-    :value="value"
-    :color="color"
-    :content="content"
-    dot
-    floating>
-  </v-badge>
-  <v-icon>mdi-bell-outline</v-icon>
+    icon
+  >
+    <v-icon>mdi-bell-outline</v-icon>
   </v-btn>
 </template>
 

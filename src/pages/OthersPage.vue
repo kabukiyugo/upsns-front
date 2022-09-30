@@ -1,40 +1,21 @@
 <template>
   <h1 id="page_name">プロフィール</h1>
   <div v-if="!isLoading">
-    <!-- <img "画像IDの挿入"> -->
     <div id="main_profile">
       <v-sheet color="white">
-        <!--ここに画像を入れる-->
-        <!-- <v-row align="center">
-          <v-col align="center"> -->
         <v-avatar size="100" color="indigo">
           <v-icon size="100" dark> mdi-account-circle </v-icon>
         </v-avatar>
-
-        <!-- 画像の表示ができない
-      <v-avatar>
-      <img
-        src="../assets/dog.jpg"
-        size="62"
-      >
-    </v-avatar> -->
-        <!-- </v-col>
-        </v-row> -->
-
-        <!--↑に画像を入れる-->
-
         <v-list>
           <v-list-item>
             <p>{{ user.name }}</p>
           </v-list-item>
-
           <v-list-item>
             <p>{{ user.comment }}</p>
           </v-list-item>
         </v-list>
         <v-divider></v-divider>
       </v-sheet>
-
       <ul>
         <li id="my_article" v-for="article in articleList" :key="article.id">
           <v-sheet color="white">
@@ -46,9 +27,8 @@
               />
             </h2>
             <p>投稿日:{{ article.insertTime }}</p>
-            <p 
-              v-if="article.updateTime != null">
-                最終更新日:{{ article.updateTime }}
+            <p v-if="article.updateTime != null">
+              最終更新日:{{ article.updateTime }}
             </p>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -102,10 +82,13 @@ export default {
   },
   methods: {
     async save(articleId) {
-      const res = await axios.post("http://localhost:8080/favorite", {
-        articleId: articleId,
-        pushUserId: 6,
-      });
+      const res = await axios.post(
+        `${process.env.VUE_APP_API_BASE_UPL}/favorite`, 
+        {
+          articleId: articleId,
+          pushUserId: 6,
+        },
+      );
       this.keepArticle = res.data;
       alert("保存しました");
     },
@@ -113,10 +96,10 @@ export default {
   async mounted() {
     this.isLoading = true;
     const user = axios.get(
-      "http://localhost:8080/user/" + this.$route.query.id
+      `${process.env.VUE_APP_API_BASE_UPL}/user/${this.$route.query.id}`
     );
     const articles = axios.get(
-      "http://localhost:8080/article/user/" + this.$route.query.id
+      `${process.env.VUE_APP_API_BASE_UPL}/article/user/${this.$route.query.id}`
     );
     let userRes;
     let articlesRes;

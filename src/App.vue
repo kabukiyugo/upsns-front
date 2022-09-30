@@ -15,20 +15,30 @@
 import HeaderMain from "@/components/fixes/HeaderMain.vue";
 import FooterMain from "@/components/fixes/FooterMain.vue";
 // import Home from '@/pages/TimeLine'
+
+//import S3 from "./s3/s3";
+
 export default {
   name: "App",
   components: { HeaderMain, FooterMain },
   data: () => ({
-    mounted() {
-      console.log(this.$route);
-    },
+    
   }),
+  mounted() {
+    console.log(this.$route);
+  },
+  // watch: {
+  //   '$route': function (to, from) {
+  //     if (from.path == '/new-post' && to.path !== from.path) {
+  //       const userId = this.$store.getters.getUserId();
+  //       S3.deleteObject(userId);
+  //       console.log(`はしったよー: ${userId}`);
+  //     }
+  //   }
+  // }
 };
 </script>
 <style>
-.v-container {
-  padding: 0;
-}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -3,15 +3,15 @@
       <v-row justify="center" no-gutters>
         <v-col class="primary lighten-2 py-4 text-center white--text" cols="12">
           <v-btn
-            v-for="link in links"
-            :key="link"
-            color="white"
-            rounded
-            class="my-2"
-          >
-            <general-link 
-              :href="link.href" 
-              :text="link.text"
+            class="space"
+            @click="toHome"
+          >Home</v-btn>
+          <!-- <router-link to="/time-line">Home</router-link> -->
+
+          <v-btn>
+            <home-page-link
+              :href="href2" 
+              :text="text2"
             />
           </v-btn>
         </v-col>
@@ -20,34 +20,34 @@
 </template>
 
 <script>
-import GeneralLink from "../atoms/links/GeneralLink.vue";
-
+import HomePageLink from "../atoms/links/HomePageLink.vue";
 export default {
   name: "footer-main",
   components: { 
-    "general-link": GeneralLink
+    "home-page-link": HomePageLink,
   },
   data() {
     return {
       value: " ",
-      links: [
-        {
-          href: "/time-line",
-          text: "Home",
-        },
-        {
-          href: "https://www.upload-gp.co.jp/",
-          text: "アップロードホームページ",
-        }
-      ]
-    };
+      text: "Home",
+      href2: "https://www.upload-gp.co.jp/",
+      text2: "アップロードホームページ",
+    }
+  },
+  methods: {
+    toHome() {
+      this.$router.push("/time-line");
+    },
   }
 };
 </script>
 
 <style>
 .v_footer {
-    background-color: rgba(0, 41, 78, 1) !important;
-    color: #000000 !important;
+  background-color: rgba(0, 41, 78, 1) !important;
+  color: #000000 !important;
+}
+.space {
+  margin-right: 10px;
 }
 </style>

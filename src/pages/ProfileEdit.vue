@@ -1,55 +1,56 @@
 <template>
-  <body>
-    <h1>[プロフィール編集]</h1>
-  </body>
-  <div class="edtiStyle">
-    <!-- アイコンのawsパスを元にアイコンを表示させる -->
-    <!-- <v-avatar size="100" color="indigo">
-      <v-icon size="100" dark> mdi-account-circle </v-icon>
-    </v-avatar> -->
-    <p>名前</p>
-    <general-input :value="name" message="名前" @input="name = $event" />
-    <p>ふりがな</p>
-    <general-input
-      :value="furigana"
-      message="ふりがな"
-      @input="furigana = $event"
-    />
-    <p>メールアドレス</p>
-    <general-input
-      :value="mail"
-      message="メールアドレス"
-      @input="mail = $event"
-    />
-    <p>電話番号</p>
-    <general-input
-      :value="tel_no"
-      message="電話番号"
-      @input="tel_no = $event"
-    />
-    <p>役職</p>
-    <v-select
-      :items="items"
-      :modelValue="role"
-      @update:modelValue="role = $event"
-    />
+  <v-container fluid fill-height>
+    <v-row no-gutters justify="center">
+      <h1>[プロフィール編集]</h1>
+    </v-row>
 
-    <p>パスワード</p>
-    <general-input
-      :value="password"
-      message="パスワード"
-      @input="password = $event"
-    />
-    <p>コメント</p>
-    <general-input
-      :value="comment"
-      message="コメント"
-      @input="comment = $event"
-    />
-    <v-spacer></v-spacer>
-    <general-button :buttonText="buttonText" @button-click="edit()">
-    </general-button>
-  </div>
+    <v-row no-gutters justify="center">
+      <div class="editStyle">
+        <p>名前</p>
+        <general-input :value="name" message="名前" @input="name = $event" />
+        <p>ふりがな</p>
+        <general-input
+          :value="furigana"
+          message="ふりがな"
+          @input="furigana = $event"
+        />
+        <p>メールアドレス</p>
+        <general-input
+          :value="mail"
+          message="メールアドレス"
+          @input="mail = $event"
+        />
+        <p>電話番号</p>
+        <general-input
+          :value="tel_no"
+          message="電話番号"
+          @input="tel_no = $event"
+        />
+        <p>役職</p>
+        <v-select
+          :items="items"
+          :modelValue="role"
+          @update:modelValue="role = $event"
+        />
+        <p>パスワード</p>
+        <general-input
+          :value="password"
+          message="パスワード"
+          @input="password = $event"
+        />
+        <p>コメント</p>
+        <general-input
+          :value="comment"
+          message="コメント"
+          @input="comment = $event"
+        />
+      </div>
+    </v-row>
+    
+    <v-row no-gutters justify="center">
+      <general-button :buttonText="buttonText" @button-click="edit()" />
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -81,20 +82,23 @@ export default {
   },
   methods: {
     async edit() {
-      await axios.put(
-        "http://localhost:8080/user/" + this.$route.query.userId,
-        {
-          id: this.ID,
-          name: this.name,
-          furigana: this.furigana,
-          telNo: this.tel_no,
-          mail: this.mail,
-          password: this.password,
-          role: this.role,
-          comment: this.comment,
-        }
-      );
-      alert("変更しました。");
+      var res = confirm("変更を保存しますか？");
+      if (res == true) {
+        await axios.put(
+          `${process.env.VUE_APP_API_BASE_UPL}/user/${this.$route.query.userid}`,
+          {
+            id: this.ID,
+            name: this.name,
+            furigana: this.furigana,
+            telNo: this.tel_no,
+            mail: this.mail,
+            password: this.password,
+            role: this.role,
+            comment: this.comment,
+          }
+        );
+        this.$router.push("/mypage");
+      }
     },
   },
 };
@@ -106,5 +110,8 @@ export default {
   background: rgb(238, 240, 250);
   margin: 0.5em auto;
   height: 50px;
+}
+.editStyle {
+  width: 45%;
 }
 </style>

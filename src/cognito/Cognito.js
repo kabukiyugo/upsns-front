@@ -15,8 +15,6 @@ import {
               UserPoolId: options.UserPoolId,
               ClientId: options.ClientId
             })
-            console.log(this.userPool)
-          
           Config.region = options.region
           Config.credentials = new CognitoIdentityCredentials({
             IdentityPoolId: options.IdentityPoolId
@@ -84,7 +82,7 @@ import {
       }
       )
     }
-  
+
     // サインアウト
     signout () {
       if (this.userPool.getCurrentUser()) {
@@ -95,7 +93,7 @@ import {
     // 認証ずみかどうか
     isAuthenticated () {
       this.currentUser = this.userPool.getCurrentUser()
-      console.log(this.currentUser)
+      //↑中身が取れてきているか
       return new Promise((resolve, reject) => {
         if (this.currentUser === null) { resolve(false) }
         this.currentUser.getSession((err, session) => {

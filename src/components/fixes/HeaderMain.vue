@@ -1,151 +1,145 @@
 <template>
-  <v-app-bar :elevation="0" color= "#00294e">
-    <!-- <v-layout wrap>
-     <v-flex xs12 sm6 md4> -->
+  <v-app-bar :elevation="0" color="#00294e">
+    <template v-if="isLogin">
+      <v-row>
+        <v-col>
+          <tohome-button
+            :height="50"
+            :width="50"
+            @button-click="toHome"
+            :color="color"
+            :content="content"
+            :vuetifyProps="props"
+          />
+        </v-col>
 
-<v-spacer  />
+        <v-col>
+          <favorite-button
+            @button-click="toSaveArticle"
+            :color="color"
+            :content="content"
+            :vuetifyProps="props"
+          />
+        </v-col>
 
-      <v-menu>
-       <template v-slot:activator="{ props }">
-        <tohome-button
-          :height="50"
-          :width="50"
-          @button-click="toHome"
-          :color="color"
-          :content="content"
-          :vuetifyProps="props"
-        />
-      </template>
-    </v-menu>
+        <v-col>
+          <post-button
+            @button-click="post"
+            :color="color"
+            :content="content"
+            :vuetifyProps="props"
+          />
+        </v-col>
 
-    <v-spacer  />
-    <v-spacer  />
-    <v-spacer  />
+        <v-col>
+          <v-row>
+            <v-col>
+              <v-menu open-on-hover>
+                <template v-slot:activator="{ props }">
+                  <icon-button
+                    @button-click="toNotification"
+                    :color="color"
+                    :content="content"
+                    :vuetifyProps="props"
+                  />
+                </template>
 
-    <v-menu>
-      <template v-slot:activator="{ props }">
-        <favorite-button
-          @button-click="toSaveArticle"
-          :color="color"
-          :content="content"
-          :vuetifyProps="props"
-        />
-      </template>
-    </v-menu>
-<v-spacer />
-    <v-menu>
-      <template v-slot:activator="{ props }">
-        <post-button
-          @button-click="post"
-          :color="color"
-          :content="content"
-          :vuetifyProps="props"
-        />
-      </template>
-    </v-menu>
-<v-spacer  />
-    <v-menu>
-      <template v-slot:activator="{ props }">
-        <login-button
-          @button-click="toLoginPage"
-          :color="color"
-          :content="content"
-          :vuetifyProps="props"
-        />
-       </template>
-      </v-menu>
-     <!-- </v-flex>
-    </v-layout> -->
+                <v-card>
+                  <v-list>
+                    <v-col>
+                      <v-banner
+                        lines="one"
+                        color="indigo"
+                        v-for="reply in displayNotification"
+                        :key="reply.id"
+                        icon="mdi-account-circle"
+                        class="material-icons"
+                      >
+                        <v-banner-text>
+                          {{ reply.user.name }}がコメントしました
+                        </v-banner-text>
+                        <v-banner-text> {{ reply.insertTime }} </v-banner-text>
 
-    <v-spacer />
-    <v-menu open-on-hover>
-      <template v-slot:activator="{ props }">
-        <icon-button
-          @button-click="toNotification"
-          :color="color"
-          :content="content"
-          :vuetifyProps="props"
-        />
-      </template>
+                        <template v-slot:actions>
+                          <notification-button
+                            @button-click="toNotification"
+                            :color="color"
+                          />
+                        </template>
+                      </v-banner>
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <div class="text-center">
+                            <v-pagination
+                              v-model="page"
+                              :length="Math.ceil(this.notifications.length / this.pageSize)"
+                              :total-visible="7"
+                              @update:modelValue="pageChange($event)"
+                            />
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-list>
+                </v-card>
+              </v-menu>
+            </v-col>
+           <v-col>
+              <v-avatar color="indigo" size="48">
+                <avatar-button 
+                  @button-click="toMyPage" 
+                />
+              </v-avatar>
+            </v-col>
 
-      <v-card min-width="600">
-        <v-banner
-          lines="one"
-          icon="mdi-account-multiple-outline"
-          color="red"
-        >
-          <v-banner-text> 〇〇が〇〇の記事にコメントしました </v-banner-text>
-          <v-banner-text> yyyy/mm/dd </v-banner-text>
-
-          <template v-slot:actions>
-            <general-link
-              :href="notification.href"
-              :text="notification.text"
-            />
-          </template>
-        </v-banner>
-
-        <v-banner
-          lines="one"
-          icon="mdi-account-multiple-outline"
-          color="red"
-        >
-          <v-banner-text> 〇〇が〇〇の記事にコメントしました </v-banner-text>
-          <v-banner-text> yyyy/mm/dd </v-banner-text>
-
-          <template v-slot:actions>
-            <general-link
-              :href="notification.href"
-              :text="notification.text"
-            />
-          </template>
-        </v-banner>
-      </v-card>
-    </v-menu>
-
-    <v-avatar color="teal" size="48">
-      <general-link
-        :href="myPage.href"
-        :text="myPage.text" 
-      />
-    </v-avatar>
+            <v-col>
+              <logout-button
+                :buttonText="buttonText"
+                :color="color"
+                @button-click="submit"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </template>
   </v-app-bar>
 </template>
 
 <script>
 import ToHomeButton from "../atoms/buttons/ToHomeButton.vue";
 import FavoriteButton from "../atoms/buttons/FavoriteButton.vue";
-import LoginButton from "../atoms/buttons/LoginButton.vue";
 import PostButton from "../atoms/buttons/PostButton.vue";
 import IconButton from "../atoms/buttons/IconButton.vue";
-import GeneralLink from "../atoms/links/GeneralLink.vue";
+import Cognito from "../../cognito/Cognito";
+import LogOutButton from "../atoms/buttons/LogOutButton.vue";
+import NotificationButton from "../atoms/buttons/NotificationButton.vue";
+import AvatarButton from "../atoms/buttons/AvatarButton.vue";
+import axios from 'axios';
 
 export default {
   name: "header-main",
   components: {
     "tohome-button": ToHomeButton,
     "favorite-button": FavoriteButton,
-    "login-button": LoginButton,
     "post-button": PostButton,
     "icon-button": IconButton,
-    "general-link": GeneralLink,
+    "logout-button": LogOutButton,
+    "notification-button": NotificationButton,
+    "avatar-button": AvatarButton,
   },
   data() {
     return {
-      buttonText: "投稿する",
       height: 28,
       width: 100,
       color: "blue",
       hover: false,
-
-      myPage: {
-        href: "/myPage",
-        text: "MY",
-      },
-      notification: {
-        href: "/Notification",
-        text: "通知一覧へ",
-      }
+      isLogin:false,
+      isLoading: false,
+      notifications: [],
+      page: 1,
+      pageSize: 5,
+      displayNotification: [],
     };
   },
   methods: {
@@ -155,23 +149,63 @@ export default {
     toNotification() {
       this.$router.push("/notification");
     },
-    toSaveArticle(){
+    toSaveArticle() {
       this.$router.push("/save-article");
     },
-    toHome(){
+    toHome() {
       this.$router.push("/time-line");
     },
-    toLoginPage(){
+    toLoginPage() {
       this.$router.push("/");
-    }
+    },
+    toMyPage() {
+      this.$router.push("/myPage");
+    },
+    submit() {
+      Cognito.signout();
+      let tologin = {
+        name: "",
+        password: "",
+        isLogin: false,
+      };
+      this.$store.commit("login", tologin);
+      this.$router.push("/");
+    },
+    pageChange(pageNumber) {
+      this.displayNotification = this.notifications.slice(
+        this.pageSize * (pageNumber - 1),
+        this.pageSize * pageNumber
+      );
+    },
+  },
+  created() {
+    this.isLogin=this.$store.getters.getIsLogin();
+    this.$store.watch((state, getters)=> getters.getIsLogin(),
+     (value)=> {
+      this.isLogin=value
+      console.log(value)
+     })
+  },
+  async mounted() {
+    this.isLoading = true;
+    const notifications = await axios.get(
+    `${process.env.VUE_APP_API_BASE_UPL}/reply/notification/${this.$store.getters.getUserId()}`
+    );
+    this.notifications = notifications.data;
+    this.displayNotification = this.notifications.slice(
+      this.pageSize * (this.page - 1),
+      this.pageSize * this.page
+    );
+    this.isLoading = false;
   },
 };
 </script>
 
 <style>
-
-#bar{
+#bar {
   color: #00294e;
 }
-
+.material-icons {
+	font-size: 18px;
+}
 </style>
